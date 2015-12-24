@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>Playlist Tools</title>
+    <style type=text/css>
+      td  { vertical-align: top; padding: 0.5em }
+      img { border:0 }
+    </style>
+  </head>
+  <body>
+    <table border=1>
+      {% for vid in videos %}
+      <tr><td>{{ vid }}</td></tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>
+
+
