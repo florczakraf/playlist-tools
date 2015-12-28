@@ -1,0 +1,22 @@
+{% extends "pltools/base.html" %}
+
+{% block title %}
+  Playlist Tools - Reverse
+{% endblock %}
+
+{% block content %}
+  <h2>Reverse playlist</h2>
+
+
+
+  {% if request.method == "POST" %}
+    Reversed playlist: <a href="https://youtube.com/playlist?list={{ new_playlist_id }}">LINK ({{ new_playlist_id }})</a><hr>
+    
+  {% endif %}
+  <form method="POST">
+    {% csrf_token %} 
+    <p>Playlist link: <input type="text" name="playlist_link"></p>
+    <input type="submit" value="Reverse" class="btn btn-primary" />
+  </form>
+
+{% endblock %}

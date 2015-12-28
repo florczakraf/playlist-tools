@@ -1,0 +1,15 @@
+{% extends "pltools/base.html" %}
+
+{% block title %}
+  Playlist Tools - Registered
+{% endblock %}
+
+{% block content %}
+
+  <h2>Registered!</h2>
+  
+  <div class="alert alert-success">
+    You have registered successfully! You may now <a href="{% url 'login' %}">log in</a>.
+  </div>
+
+{% endblock %}

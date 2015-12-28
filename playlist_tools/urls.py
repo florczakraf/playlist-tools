@@ -1,9 +1,8 @@
 import os
 from django.conf.urls import *
-
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
-#admin.autodiscover()
+from django.views.generic.edit import CreateView
+from pltools.forms import UserCreateForm
 
 urlpatterns = patterns('',
     # Examples:
@@ -11,12 +10,25 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-    (r'^$', 'pltools.views.index'),
-    (r'^oauth2callback', 'pltools.views.auth_return'),
-    (r'^accounts/login/$', 'django.contrib.auth.views.login',
-                           {'template_name': 'pltools/login.html'}),
+    url(r'^$', 'pltools.views.index'),
 
-    #(r'^static/(?P<path>.*)$', 'django.views.static.serve',
-    #    {'document_root': os.path.join(os.path.dirname(__file__), 'static')}),
+    #tools
+    url(r'^reverse', 'pltools.views.reverse', name='reverse'),
+    
+    #tmp
+    url(r'my_videos', 'pltools.views.my_videos'),
+
+
+    #auth
+    url(r'^oauth2callback', 'pltools.views.auth_return'),
+    url(r'^register$', CreateView.as_view(
+                      template_name='pltools/register.html',
+                      form_class=UserCreateForm,
+                      success_url='registered'
+                    ), name='register'),
+    url(r'^registered$', 'pltools.views.registered'),
+    url(r'login/', 'django.contrib.auth.views.login',
+     {'template_name': 'pltools/login.html'}, name='login'),
+    url(r'^logout$', 'pltools.views.logout_view', name='logout')
 
 )
