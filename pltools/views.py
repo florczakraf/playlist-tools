@@ -1,6 +1,7 @@
 import os
 import logging
 import httplib2
+import datetime
 from urlparse import parse_qs, urlparse
 from apiclient.discovery import build
 from django.contrib.auth.decorators import login_required
@@ -91,22 +92,19 @@ def reverse(request):
 
   if request.method == "POST":
     playlist_id = parse_qs(urlparse(request.POST.get("playlist_link")).query)['list'][0]
-    
-  
+
     http = httplib2.Http()
     http = credential.authorize(http)
     service = build("youtube", "v3", http=http)
     videos = []
-    for channel in channels_response["items"]:
-      vids_request = service.playlistItems().list(playlistId=playlist_id, part="contentDetails", maxResults=50)
-      while vids_request:
-        vids_response = vids_request.execute()
-        for vid in vids_response["items"]:
-          videos.append(vid["contentDetails"]["videoId"])
+    vids_request = service.playlistItems().list(playlistId=playlist_id, part="contentDetails", maxResults=50)
+    while vids_request:
+      vids_response = vids_request.execute()
+      for vid in vids_response["items"]:
+        videos.append(vid["contentDetails"]["videoId"])
+      vids_request = service.playlistItems().list_next(vids_request, vids_response)
 
-        vids_request = service.playlistItems().list_next(vids_request, vids_response)
-
-    new_playlist_id = service.playlists().insert(
+    new_playlist = service.playlists().insert(
                         part="snippet,status",
                         body=dict(
                           snippet=dict(
@@ -118,6 +116,7 @@ def reverse(request):
                           )
                         )
                       ).execute()
+    new_playlist_id = new_playlist['id']
 
     for vid in videos:
       add_video_request = service.playlistItems().insert(
