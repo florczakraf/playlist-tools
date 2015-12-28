@@ -7,16 +7,24 @@
 {% block content %}
   <h2>Reverse playlist</h2>
 
+  {% if error %}
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  {% endif %}
 
-
-  {% if request.method == "POST" %}
-    Reversed playlist: <a href="https://youtube.com/playlist?list={{ new_playlist_id }}">LINK ({{ new_playlist_id }})</a><hr>
+  {% if new_playlist_id %}
+    Reversed playlist: <a href="https://youtube.com/playlist?list={{ new_playlist_id }}" target="_blank">https://youtube.com/playlist?list={{ new_playlist_id }}</a><hr>
     
   {% endif %}
-  <form method="POST">
+  <form role="form" method="POST">
     {% csrf_token %} 
-    <p>Playlist link: <input type="text" name="playlist_link"></p>
-    <input type="submit" value="Reverse" class="btn btn-primary" />
+    <div class="form-group">
+      <label for="playlist_link">Playlist link:</label>
+      <input type="text" name="playlist_link" value="{{ playlist_link }}" class="form-control">
+    </div>
+    <input type="submit" value="Reverse" class="btn btn-primary">
   </form>
+  <p class="lead">This may take a while. Please be patient.</p>
 
 {% endblock %}

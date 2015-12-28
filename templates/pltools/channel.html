@@ -1,0 +1,30 @@
+{% extends "pltools/base.html" %}
+
+{% block title %}
+  Playlist Tools - Channel
+{% endblock %}
+
+{% block content %}
+  <h2>Channel playlist</h2>
+
+  {% if error %}
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  {% if new_playlist_id %}
+    Channel playlist: <a href="https://youtube.com/playlist?list={{ new_playlist_id }}" target="_blank">https://youtube.com/playlist?list={{ new_playlist_id }}</a><hr>
+    
+  {% endif %}
+  <form role="form" method="POST">
+    {% csrf_token %} 
+    <div class="form-group">
+      <label for="channel_link">Channel link:</label>
+      <input type="text" name="channel_link" value="{{ channel_link }}" class="form-control">
+    </div>
+    <input type="submit" value="Create" class="btn btn-primary">
+  </form>
+  <p class="lead">This may take a while. Please be patient.</p>
+
+{% endblock %}

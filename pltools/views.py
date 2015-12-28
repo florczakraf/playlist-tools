@@ -18,6 +18,7 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.django_orm import Storage
 from django.conf.urls import *
 from django.contrib.auth import logout
+from pltools.utils import *
 
 CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), '..', 'secrets.json')
 
@@ -68,7 +69,6 @@ def logout_view(request):
 
 @login_required
 def auth_return(request):
-  print request.REQUEST['state'], request.user
   if not xsrfutil.validate_token(settings.SECRET_KEY, str(request.REQUEST['state']),
                                  request.user):
     return  HttpResponseBadRequest()
@@ -81,7 +81,6 @@ def auth_return(request):
 
 @login_required
 def reverse(request):
-
   storage = Storage(CredentialsModel, 'id', request.user, 'credential')
   credential = storage.get()
   if credential is None or credential.invalid == True:
@@ -91,50 +90,54 @@ def reverse(request):
     return HttpResponseRedirect(authorize_url)
 
   if request.method == "POST":
-    playlist_id = parse_qs(urlparse(request.POST.get("playlist_link")).query)['list'][0]
+    playlist_link = request.POST.get("playlist_link")
 
+    try:
+      playlist_id = parse_qs(urlparse(playlist_link).query)['list'][0]
+    except:
+      return render(request, 'pltools/reverse.html', {'error': 'There was an error while parsing your link. Please double-check it.', 'playlist_link': playlist_link})
     http = httplib2.Http()
     http = credential.authorize(http)
     service = build("youtube", "v3", http=http)
-    videos = []
-    vids_request = service.playlistItems().list(playlistId=playlist_id, part="contentDetails", maxResults=50)
-    while vids_request:
-      vids_response = vids_request.execute()
-      for vid in vids_response["items"]:
-        videos.append(vid["contentDetails"]["videoId"])
-      vids_request = service.playlistItems().list_next(vids_request, vids_response)
+    videos = get_videos_ids(service, playlist_id)
+    new_playlist_id = create_playlist(service, 'Reversed %s' % playlist_id)
 
-    new_playlist = service.playlists().insert(
-                        part="snippet,status",
-                        body=dict(
-                          snippet=dict(
-                            title="Reversed %s" % playlist_id,
-                            description=str(datetime.datetime.today())
-                            ),
-                          status=dict(
-                            privacyStatus="private"
-                          )
-                        )
-                      ).execute()
-    new_playlist_id = new_playlist['id']
-
-    for vid in videos:
-      add_video_request = service.playlistItems().insert(
-                            part='snippet',
-                            body=dict(
-                              snippet=dict(
-                                playlistId=new_playlist_id,
-                                resourceId=dict(
-                                  kind='youtube#video',
-                                  videoId=vid
-                                ),
-                                position=0
-                              ) 
-                            )
-                          ).execute()
-
+    for vid_id in videos:
+      add_to_playlist(service, new_playlist_id, vid_id)
 
     return render(request, 'pltools/reverse.html', {'new_playlist_id': new_playlist_id})
   
   return render(request, 'pltools/reverse.html')
+
+@login_required
+def channel(request):
+  storage = Storage(CredentialsModel, 'id', request.user, 'credential')
+  credential = storage.get()
+  if credential is None or credential.invalid == True:
+    FLOW.params['state'] = xsrfutil.generate_token(settings.SECRET_KEY,
+                                                   request.user)
+    authorize_url = FLOW.step1_get_authorize_url()
+    return HttpResponseRedirect(authorize_url)
+
+  if request.method == "POST":
+    channel_link = str(request.POST.get("channel_link"))
+    
+    http = httplib2.Http()
+    http = credential.authorize(http)
+    service = build("youtube", "v3", http=http)
+
+    try:
+      videos = get_channel_videos_ids(service, channel_link)
+    except:
+      return render(request, 'pltools/channel.html', {'error': 'There was an error while parsing your link. Please double-check it.', 'channel_link': channel_link})
+
+    new_playlist_id = create_playlist(service, 'All from %s' % channel_link)
+
+    for vid_id in videos:
+      add_to_playlist(service, new_playlist_id, vid_id)
+
+    return render(request, 'pltools/channel.html', {'new_playlist_id': new_playlist_id})
+  
+  return render(request, 'pltools/channel.html')
+
 
