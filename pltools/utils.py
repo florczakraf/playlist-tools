@@ -43,8 +43,8 @@ def add_to_playlist(service, playlist_id, video_id, position=0):
   return add_video_response
 
 def get_channel_videos_ids(service, link):
-  print "dupa"
-
+  channel = None
+  user = None
   try:
     channel = re.search('\/channel\/(\w+)\/?', link).group(1)
   except:
@@ -57,19 +57,41 @@ def get_channel_videos_ids(service, link):
 
   if channel:
     channels_response = service.channels().list(id=channel, part="contentDetails", maxResults=1).execute()
-    print "got channel"
-    uploads_playlist_id = ''
     for channel in channels_response['items']:
       uploads_playlist_id = channel['contentDetails']['relatedPlaylists']['uploads']
-    #uploads_playlist_id = channels_reposnse['items'][0]['contentDetails']['relatedPlaylists']['uploads']
-    print uploads_playlist_id
     return get_videos_ids(service, uploads_playlist_id)
   elif user:
     channels_response = service.channels().list(forUsername=user, part="contentDetails", maxResults=1).execute()
-    print "got user"
-    uploads_playlist_id = channels_reposnse['items'][0]['contentDetails']['relatedPlaylists']['uploads']
+    for channel in channels_response['items']:
+      uploads_playlist_id = channel['contentDetails']['relatedPlaylists']['uploads']
     return get_videos_ids(service, uploads_playlist_id)
   else:
     raise Exception("Invalid channel link.")
 
+def get_channel_playlist(service, link):
+  channel = None
+  user = None
+  try:
+    channel = re.search('\/channel\/([\w-]+)\/?', link).group(1)
+  except:
+    pass
 
+  try:
+    user = re.search('\/user\/([\w-]+)\/?', link).group(1)
+  except:
+    pass
+
+  if channel:
+    print channel
+    channels_response = service.channels().list(id=channel, part="contentDetails", maxResults=1).execute()
+    print channels_response
+    for channel in channels_response['items']:
+      uploads_playlist_id = channel['contentDetails']['relatedPlaylists']['uploads']
+      return uploads_playlist_id
+  elif user:
+    channels_response = service.channels().list(forUsername=user, part="contentDetails", maxResults=1).execute()
+    for channel in channels_response['items']:
+      uploads_playlist_id = channel['contentDetails']['relatedPlaylists']['uploads']
+      return uploads_playlist_id
+  else:
+    raise Exception("Invalid channel link.")

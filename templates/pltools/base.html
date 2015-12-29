@@ -5,9 +5,13 @@
   <meta charset="utf-8">
   <title>{% block title %}Playlist Tools{% endblock %}</title>
   <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+  <link href="{% static "css/sticky_footer.css" %}" rel="stylesheet">
   <style>
   body {
     padding-top: 70px;
+  }
+  .navbar-inverse .navbar-brand {
+    color: #aa00ff;
   }
   </style>
 </head>
@@ -26,29 +30,26 @@
       <div class="collapse navbar-collapse" id="navbar-collapse-1">
         <ul class="nav navbar-nav">
           <li>
-            <a href="reverse">Reverse</a>
+            <a href="{% url 'reverse' %}"><span class="glyphicon glyphicon-sort"></span> Reverse</a>
           </li>
           <li>
-            <a href="channel">Channel</a>
+            <a href="{% url 'channel' %}"><span class="glyphicon glyphicon-film"></span> Channel</a>
           </li>
           <li>
-            <a href="random">Random</a>
-          </li>
-          <li>
-            <a href="tos">ToS</a>
+            <a href="{% url 'randomize' %}"><span class="glyphicon glyphicon-random"></span> Randomize</a>
           </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if user.is_authenticated %}
             <li>
-              <a href="{% url 'logout' %}">Logout ({{ user.username }})</a>
+              <a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout ({{ user.username }})</a>
             </li>
           {% else %}
             <li>
-              <a href="{% url 'login' %}">Log in</a>
+              <a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Log in</a>
             </li>
             <li>
-              <a href="{% url 'register' %}">Register</a>
+              <a href="{% url 'register' %}"><span class="glyphicon glyphicon-pencil"></span> Register</a>
             </li>
           {% endif %}
         </ul>
@@ -60,7 +61,18 @@
     {% block content %}          
     {% endblock %}
   </div>
-  <script src="{% static "js/jquery.js" %}"></script>
-  <script src="{% static "js/bootstrap.min.js" %}"></script>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="text-muted">
+        Playlist tools.
+        <a href="https://youtube.com/" target="_blank" style="float: right; display: block">
+          <img style="width: 175px" alt="Powered by YouTube" src="{% static 'images/pwrdByYT-black.png' %}">
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
 </body>
 </html>

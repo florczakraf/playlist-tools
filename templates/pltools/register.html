@@ -1,4 +1,5 @@
 {% extends "pltools/base.html" %}
+{% load widget_tweaks %}
 
 {% block title %}
   Playlist Tools - Register
@@ -14,27 +15,25 @@
 {% endif %}
 
 <form method="post" action="{% url 'register' %}">
-{% csrf_token %}
-<div>
-  <p>
+  {% csrf_token %}
+  <div class="form-group">
     {{ form.username.label_tag }} 
-    {{ form.username }}
-  </p>
-  <p>
+    {{ form.username|add_class:'form-control' }}
+  </div>
+  <div class="form-group">
     {{ form.email.label_tag }} 
-    {{ form.email }}
-  </p>
-  <p>
+    {{ form.email|add_class:'form-control' }}
+  </div>
+  <div class="form-group">
     {{ form.password1.label_tag }} 
-    {{ form.password1 }}
-  </p>
-  <p>
+    {{ form.password1|add_class:'form-control' }}
+  </div>
+  <div class="form-group">
     {{ form.password2.label_tag }} 
-    {{ form.password2 }}
-  </p>
-</div>
+    {{ form.password2|add_class:'form-control' }}
+  </div>
 
-<input type="submit" class="btn btn-primary" value="Register" />
+  <input type="submit" class="btn btn-primary" value="Register">
 </form>
 
 {% endblock %}

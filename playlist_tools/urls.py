@@ -15,9 +15,7 @@ urlpatterns = patterns('',
     #tools
     url(r'^reverse', 'pltools.views.reverse', name='reverse'),
     url(r'^channel', 'pltools.views.channel', name='channel'),
-    
-    #tmp
-    url(r'my_videos', 'pltools.views.my_videos'),
+    url(r'^randomize', 'pltools.views.randomize', name='randomize'),
 
 
     #auth

@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pltools',
+    'widget_tweaks',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
