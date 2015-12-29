@@ -82,9 +82,7 @@ def get_channel_playlist(service, link):
     pass
 
   if channel:
-    print channel
     channels_response = service.channels().list(id=channel, part="contentDetails", maxResults=1).execute()
-    print channels_response
     for channel in channels_response['items']:
       uploads_playlist_id = channel['contentDetails']['relatedPlaylists']['uploads']
       return uploads_playlist_id
