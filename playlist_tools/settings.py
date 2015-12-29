@@ -24,8 +24,9 @@ if socket.gethostname() == 'rflaptop':
   SECRET_KEY = 'pa=%9m52wp+&yeb-xjl((7j*i+k(#%v#l-d&!n7387%=1n8ygi'
 else:
   DEBUG = TEMPLATE_DEBUG = False
+  SECRET_KEY = 'pa=%9m52wp+&yeb-xjl((7j*i+k(#%v#l-d&!n7387%=1n8ygi'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.rflorczak.eu']
 
 # Application definition
 
@@ -38,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'pltools',
     'widget_tweaks',
+    'mod_wsgi.server',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -96,6 +98,7 @@ LOGIN_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
