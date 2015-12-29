@@ -26,7 +26,9 @@ else:
   DEBUG = TEMPLATE_DEBUG = False
   SECRET_KEY = 'pa=%9m52wp+&yeb-xjl((7j*i+k(#%v#l-d&!n7387%=1n8ygi'
 
-ALLOWED_HOSTS = ['.rflorczak.eu']
+ALLOWED_HOSTS = ['.rflorczak.eu', '*']
+
+USE_X_FORWARDED_HOST = True
 
 # Application definition
 
