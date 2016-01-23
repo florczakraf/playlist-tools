@@ -2,12 +2,23 @@
 Project for Advanced Python course @ ii uwr
 
 Production server: https://yt.rflorczak.eu
+
+# Known issues
+* Reversing or randomizing long playlist takes long time (due to lack of background workers) which can lead
+to connection timeouts with reverse proxy or user reloading the page because of no quick response.
+* User token verification sometimes doesn't redirect to Google for reauthentication (results in error 
+500) -- reloading page fixes problem.
+
 # Installation (for Debian based distros)
 ```bash
 sudo apt-get install python python-pip python-django
 pip install google-api-python-client
 pip install django-widget-tweaks
 ```
+
+Don't forget to change secrets and addresses in `playlist_tools/settings.py`
+as well as in `pltools/views.py`.
+
 ### Running in production (wsgi)
 First run:
 ```bash
